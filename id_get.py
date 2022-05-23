@@ -1,10 +1,27 @@
 import json
+import secrets
 
 import requests
+from anti_useragent import UserAgent
 
+openid = ""
+def makeHeader(openid):
+    return {
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+        'Connection': 'close',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'Cookie': 'JSESSIONID=' + secrets.token_urlsafe(40),
+        'Host': 'www.jxqingtuan.cn',
+        'Origin': 'http://www.jxqingtuan.cn',
+        'Referer': 'http://www.jxqingtuan.cn/html/h5_index.html?&accessToken=' + openid,
+        'User-Agent': UserAgent(platform="iphone").wechat,
+        'X-Requested-With': 'XMLHttpRequest'
+    }
 
 def get_mes(pid):
-    url = "http://osscache.vol.jxmfkj.com/pub/vol/config/organization?pid={pid}".format(pid = pid)
+    url = "http://www.jxqingtuan.cn/pub/vol/config/organization?pid={pid}".format(pid = pid)
     payload={}
     headers = {
       'Cookie': 'JSESSIONID=BUkb7Lsw0BWVR1oHYqKuBUVXme6ERuveELY4ohQA; JSESSIONID=V6Wm1rYYKt2ApKxkXkGdCGT8snY3pt-11q4sN6Mo',
@@ -14,8 +31,10 @@ def get_mes(pid):
       'Content-Type': 'application/json;charset=UTF-8',
       'Referer': 'http://osscache.vol.jxmfkj.com/html/h5_index.html'
     }
-    response = requests.request("GET", url, headers=headers, data=payload)
-    response = json.loads(response.text)
+    # response = requests.request("GET", url, headers=headers, data=payload)
+    response = json.loads((requests.get(url=url, data=json.dumps(payload), headers=makeHeader(openid))).text)
+    print(response)
+    # response = json.loads(response.text)
     response = response["result"]
     response_len = len(response)
     k = {}
