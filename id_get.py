@@ -33,7 +33,7 @@ def get_mes(pid):
     }
     # response = requests.request("GET", url, headers=headers, data=payload)
     response = json.loads((requests.get(url=url, data=json.dumps(payload), headers=makeHeader(openid))).text)
-    print(response)
+    # print(response)
     # response = json.loads(response.text)
     response = response["result"]
     response_len = len(response)
