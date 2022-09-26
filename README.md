@@ -1,7 +1,5 @@
-# QN-big-study
- 江西青年大学习批量过后台适用于2022新版青年大学习善德教育系统
-
-<h1 align="center">江西青年大学习批量过后台适用于2022新版青年大学习善德教育系统</h1>
+<h1 align="center">江西青年大学习批量过后台</h1>
+<h1 align="center">适用于2022新版青年大学习善德教育系统</h1>
 <p align="center">
     <a href="https://github.com/ygxiuming/QN-big-study/issues" style="text-decoration:none">
         <img src="https://img.shields.io/github/issues/ygxiuming/QN-big-study.svg" alt="GitHub issues"/>
