@@ -67,11 +67,8 @@
 <h1>程序打包资源</h1>
 
 <p>
-<a href ='https://wwd.lanzoum.com/b01pw1bgh'>蓝奏云</a>
-</p>
-https://wwd.lanzoum.com/b01pw1bgh
-<br>
-密码:9txa
+<a href ='https://wwd.lanzoum.com/b01pvee8j'>蓝奏云</a>
+https://wwd.lanzoum.com/b01pvee8j 密码：8888
 
 
 有问题请发issue，看到会回复！
