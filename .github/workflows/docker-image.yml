@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+   schedule:
+    - cron: "20 13 * * 3"
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag docker-run:v1 
+      
+    - name: run docker`s image
+      run: docker run docker-run:v1
+    
