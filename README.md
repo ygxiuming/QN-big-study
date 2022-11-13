@@ -16,12 +16,12 @@
 </p>
 <h3 align="center">不断更新中....</h3>
 
-<p>
- 环境：
-    requests
-    xlrd == 1.2.0 //最新版xlrd==2.0.1不支持xlsx文件的读取
-    python3.6以上
-</p>
+
+ ### 环境：
+    requests<br>
+    xlrd == 1.2.0 //最新版xlrd==2.0.1不支持xlsx文件的读取<br>
+    python3.6以上<br>
+
 <br>
 <h2>功能：</h2>
 <p> 新设团委id查询</p>
@@ -60,6 +60,16 @@
 <a href="https://github.com/ygxiuming/QN-big-study/tree/main/assets" style="text-decoration:none" >
         <img src="assets/study.png" alt="学习页面"/>
 </a>
+
+
+## 特别鸣谢
+* [@Cnlomou](https://github.com/Cnlomou/QN-big-study)「Cnlomou」
+<br>
+1、接决依赖缺少问题
+<br>
+2、添加定时任务
+<br>
+3、添加docker启动
 
 
 <br>
