@@ -1,2 +1,4 @@
 anti_useragent>=1.0.7
 requests>=2.27.1
+xlrd==1.2.0
+numpy
