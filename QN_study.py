@@ -2,8 +2,8 @@ import json
 import requests
 import xlrd
 from numpy.core.defchararray import isdigit
-
-
+import os
+requests.packages.urllib3.disable_warnings()
 tittle = '''
 ####################################################################
                   ___====-_  _-====___
@@ -29,7 +29,7 @@ tittle = '''
 github:https://github.com/ygxiuming/QN-big-study
                
                         使用声明
-       本源代码是本人利用利用时间的写成，《免费》向编程爱好者学习使用！
+       本源代码是本人利用时间的写成，《免费》向编程爱好者学习使用！
                     本源禁止使用商业非法用途！
             本源代码无任何恶意代码！所造成的损失等概与本人无关
                 使用编译本原始码即取代同意上述声明
@@ -57,8 +57,8 @@ def get_mes(pid):
 
     response = requests.request("GET", url, headers=headers, data=payload)
 
-    print(response.text)
-
+    # print(response.text)
+    print("")
     response = json.loads(response.text)
     response = response["result"]
     response_len = len(response)
@@ -164,14 +164,29 @@ def gettittle():
     url =  res["result"]["uri"]
     t = "第{}期".format(id) + tittle
     print("第{}期".format(id) + "青年大学习标题：" + tittle   + "\n" + "青年大学习学习链接：" + url)
-    return id,t
+    return id,t,url
+
+def sav_image(url,tittle):
+    s = s = url.split('/')[-2]
+    img_url = 'https://h5.cyol.com/special/daxuexi/%s/images/end.jpg'%s
+    print('青年大学习学习截图：' + img_url)
+    if os.path.exists('./青年大学习学习截图'):
+        pass
+    else:
+        os.makedirs('./青年大学习学习截图')
+
+    img = requests.get(img_url,verify=False)
+    f = open('./青年大学习学习截图/%s.jpg'%tittle, 'ab')  # 存储图片，多媒体文件需要参数b（二进制文件）
+    f.write(img.content)  # 多媒体存储content
+    f.close()
 
 
 def QNstudy():
-    id,tit = gettittle()
-    data_excel = xlrd.open_workbook('名单.xlsx')
+    id,tit,url_study = gettittle()
+    data_excel = xlrd.open_workbook('名单.xls')
     table = data_excel.sheets()[0]  # 通过索引顺序获取
     nid_list = table.col_values(colx=0)
+    optionend = input("是否生成学习截图(是输入1，否输入0：")
     for i in range(1,len(nid_list)):
         text = table.row_values(i,start_colx=0,end_colx=None)
         if text[2] == '':
@@ -184,35 +199,56 @@ def QNstudy():
         tx = getStudy(id, nid, subOrg, name)
         message = f'''
  #################################################################
- 第{id}期青年大学习：{tit}
- 序号：第{i}个学习
- 组织id：{nid}
- 组织级别：{sub}
- 姓名：{name}
- 班级：{subOrg}（四级组织无班级选项）
- 学习状态：{tx}
+         第{id}期青年大学习：{tit}
+         序号：第{i}个学习
+         组织id：{nid}
+         组织级别：{sub}
+         姓名：{name}
+         班级：{subOrg}（四级组织无班级选项）
+         学习状态：{tx}
  #################################################################
 '''
         print(message)
+        if optionend == '1':
+            sav_image(url_study, name)
+            print(name,'青年大学习截图保存成功！')
+        else:
+            pass
+
 
 if __name__ == '__main__':
     print(tittle)
     model = '''
- 1.青年大学习组织id查询
- 2.青年大学习开始学习      
+ #########################使用说明###################################
+     使用说明：
+         将名单.xlsx表格与该程序放置同一目录下，填写相关学习名单信息，
+     其中组织代码pid可通过该程序的模块1可查询，如果是三级组织需填写班级
+     信息，若是四级组织不要填写班级信息空着即可。
+        填写完成之后运行该程序的模块2即可批量学习！
+        若出现问题可前往以下网址提交issu
+        
+     https://github.com/ygxiuming/QN-big-study
+     
+ ###########################模块选择################################
+ 
+                        1.青年大学习组织id查询
+                        
+                        2.青年大学习开始批量学习   
+           
+ ####################################################################
 '''
     agree = input("是否同意以上声明，同意（请输入1），不同意（请输入0） ：")
+
     if agree == 0:
         print("请关闭软件，出门右走谢谢！")
     else:
-        print(model)
-        mod = int(input("请输入选择模式序号："))
-        if mod == 1 :
-            id_getinfo()
-        else:
-            QNstudy()
-
-
-
-
-
+        while 1:
+            print(model)
+            mod = int(input("请输入选择模式序号："))
+            if mod == 1 :
+                id_getinfo()
+                print("已返回模块选择界面！！！")
+            else:
+                QNstudy()
+                print("已经全部学习完成！请查看输出历史记录！")
+                print("已返回模块选择界面！！！")
