@@ -32,6 +32,10 @@
 
 <h2>使用说明：</h2>
 
+### 将整个项目 Fork到自己仓库/拉取到本地/下载到本地
+### pip3 install -r requirements.txt 安装依赖
+<br>
+
 <h3>step1:下载本仓库所有代码，运行QN_study.py程序，如下图所示</h3>
     <a href="https://github.com/ygxiuming/QN-big-study/tree/main/assets" style="text-decoration:none" >
         <img src="assets/1.png" alt="启动页面"/>
