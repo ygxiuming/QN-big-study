@@ -16,21 +16,38 @@
 </p>
 <h3 align="center">不断更新中....</h3>
 
-<p>
- 环境：
-    requests
-    xlrd == 1.2.0 //最新版xlrd==2.0.1不支持xlsx文件的读取
-    python3.6以上
-</p>
+
+ ### 环境：
+    requests<br>
+    xlrd == 1.2.0 //最新版xlrd==2.0.1不支持xlsx文件的读取<br>
+    python3.6以上<br>
+
 <br>
 <h2>功能：</h2>
 <p> 新设团委id查询</p>
 <p> 批量学习(不限制学校，班级，全自动化)</p>
 理论上江西省所有学校所有专业都适用，请自行测试
+<p> 增加青年大学习学习截图功能，可供选择批量产生截图</p>
 <br>
 <br>
 
+<h2>更新记录</h2>
+2022/05/20 发布青年大学习单人学习<br>
+2022/05/22 发布青年大学习多人学习版本<br>
+2022/05/23 更新青年大学习脚本（江西共青团服务器更新）<br>
+2022/09/26 关于xlrd模块版本说明<br>
+2022/09/27 打包版本发布(仅仅适用于windows系统)<br>
+2022/11/13 Cnlomou添加docker启动以及定时任务<br>
+2022/11/14 推出单个学习截图以及批量导出学习截图功能<br>
+2022/11/14 解决python版本对于xlrd不兼容问题     <br>   
+
+<br>
+<br>
 <h2>使用说明：</h2>
+
+### 将整个项目 Fork到自己仓库/拉取到本地/下载到本地
+### pip3 install -r requirements.txt 安装依赖
+<br>
 
 <h3>step1:下载本仓库所有代码，运行QN_study.py程序，如下图所示</h3>
     <a href="https://github.com/ygxiuming/QN-big-study/tree/main/assets" style="text-decoration:none" >
@@ -60,6 +77,16 @@
 <a href="https://github.com/ygxiuming/QN-big-study/tree/main/assets" style="text-decoration:none" >
         <img src="assets/study.png" alt="学习页面"/>
 </a>
+
+
+## 特别鸣谢
+* [@Cnlomou](https://github.com/Cnlomou/QN-big-study)「Cnlomou」
+<br>
+1、接决依赖缺少问题
+<br>
+2、添加定时任务
+<br>
+3、添加docker启动
 
 
 <br>
