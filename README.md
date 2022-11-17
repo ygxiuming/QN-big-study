@@ -91,6 +91,17 @@
 
 <br>
 
+## &#8627; Stargazers
+
+[![Stargazers repo roster for @ygxiuming/QN-big-study](https://reporoster.com/stars/ygxiuming/QN-big-study)](https://github.com/ygxiuming/QN-big-study/stargazers)
+
+<br>
+
+## &#8627; Forkers
+[![Forkers repo roster for @ygxiuming/QN-big-study](https://reporoster.com/forks/ygxiuming/QN-big-study)](https://github.com/ygxiuming/QN-big-study/network/members)
+
+<br>
+
 <h1>程序打包资源</h1>
 
 <p>
