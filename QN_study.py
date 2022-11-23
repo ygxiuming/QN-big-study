@@ -186,7 +186,6 @@ def QNstudy():
     data_excel = xlrd.open_workbook('名单.xls')
     table = data_excel.sheets()[0]  # 通过索引顺序获取
     nid_list = table.col_values(colx=0)
-    optionend = input("是否生成学习截图(是输入1，否输入0：")
     for i in range(1,len(nid_list)):
         text = table.row_values(i,start_colx=0,end_colx=None)
         if text[2] == '':
@@ -209,11 +208,6 @@ def QNstudy():
  #################################################################
 '''
         print(message)
-        if optionend == '1':
-            sav_image(url_study, name)
-            print(name,'青年大学习截图保存成功！')
-        else:
-            pass
 
 
 if __name__ == '__main__':
