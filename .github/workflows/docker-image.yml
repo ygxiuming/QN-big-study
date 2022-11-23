@@ -19,6 +19,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag docker-run:v1 
       
+      
     - name: run docker`s image
       run: docker run docker-run:v1
     
