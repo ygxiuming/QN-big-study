@@ -209,6 +209,36 @@ def QNstudy():
 '''
         print(message)
 
+def QNstudytu():
+    id,tit,url_study = gettittle()
+    data_excel = xlrd.open_workbook('名单.xls')
+    table = data_excel.sheets()[0]  # 通过索引顺序获取
+    nid_list = table.col_values(colx=0)
+    for i in range(1,len(nid_list)):
+        text = table.row_values(i,start_colx=0,end_colx=None)
+        if text[2] == '':
+            sub = '四级组织'
+        else:
+            sub = '三级组织'
+        nid = text[0]
+        name = text[1]
+        subOrg = text[2]
+        tx = getStudy(id, nid, subOrg, name)
+        message = f'''
+ #################################################################
+         第{id}期青年大学习：{tit}
+         序号：第{i}个学习
+         组织id：{nid}
+         组织级别：{sub}
+         姓名：{name}
+         班级：{subOrg}（四级组织无班级选项）
+         学习状态：{tx}
+ #################################################################
+'''
+        print(message)
+        sav_image(url_study, name)
+        print(name,'青年大学习截图保存成功！')
+    
 
 if __name__ == '__main__':
     print(tittle)
@@ -243,6 +273,10 @@ if __name__ == '__main__':
                 id_getinfo()
                 print("已返回模块选择界面！！！")
             else:
-                QNstudy()
+                optionend = input("是否生成学习截图(是输入1，否输入0：")
+                if optionend == '1':
+                    QNstudytu()
+                else:
+                    QNstudy()
                 print("已经全部学习完成！请查看输出历史记录！")
                 print("已返回模块选择界面！！！")
