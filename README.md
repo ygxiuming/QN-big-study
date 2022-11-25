@@ -28,6 +28,7 @@
 <p> 批量学习(不限制学校，班级，全自动化)</p>
 理论上江西省所有学校所有专业都适用，请自行测试
 <p> 增加青年大学习学习截图功能，可供选择批量产生截图</p>
+<p> 添加docker在GitHub action 定时运行</p>
 <br>
 <br>
 
@@ -43,6 +44,22 @@
 
 <br>
 <br>
+<br>
+
+## GitHub action 定时运行使用说明
+- 1.fork仓库到自己的仓库
+- 2.下载仓库的`名单.xls`文件
+- 3.按照下面的使用说明填写相关内容在`名单.xls`文件中，保存并上传至你fork的仓库。 [不会填写参数](#peizhi)
+- 4.设置定时时间。   [怎么设置时间参数?](https://docs.github.com/cn/actions/using-workflows/events-that-trigger-workflows#schedule)
+- 5.修改你fork 仓库内的`QN-big-study/blob/main/.github/workflows/docker-image.yml`内的文件(默认是每周3晚上9点多定时执行)
+~~~
+on:
+   schedule:
+    - cron: "20 13 * * 3"  #这里是每周3晚上9点多 
+~~~
+- 6.接下来可以关闭你的电脑，每周都会根据你的时间设定自动学习默认是每周3晚上9点多定时执行()。
+
+<br>
 <h2>使用说明：</h2>
 
 ### 将整个项目 Fork到自己仓库/拉取到本地/下载到本地
@@ -54,7 +71,7 @@
         <img src="assets/1.png" alt="启动页面"/>
     </a>
 
-<p>一共有两个模块，其中需要查询班级的组织id进行配置，如下图</p>
+<p id="peizhi">一共有两个模块，其中需要查询班级的组织id进行配置，请输入`1`进入`青年大学习组织id查询`如下图</p>
 <a href="https://github.com/ygxiuming/QN-big-study/tree/main/assets" style="text-decoration:none" >
         <img src="assets/组织PID.png" alt="id查询页面"/>
 </a>
