@@ -156,15 +156,16 @@ def getStudy(course, nid, subOrg, cardNo):
 
 def gettittle():
     global datas
-    url = "http://www.jxqingtuan.cn/pub/vol/volClass/current"
+    url = "http://www.jxqingtuan.cn/pub/vol/volClass"
     res = requests.get(url).text
-    res = json.loads(res)
-    id = res["result"]["id"]
-    tittle = res["result"]["title"]
-    url =  res["result"]["uri"]
+    res = json.loads(res)["list"][0]
+    # print(res)
+    id = res["id"]
+    tittle = res["title"]
+    url = res["url"]
     t = "第{}期".format(id) + tittle
-    print("第{}期".format(id) + "青年大学习标题：" + tittle   + "\n" + "青年大学习学习链接：" + url)
-    return id,t,url
+    print("第{}期".format(id) + "青年大学习标题：" + tittle + "\n" + "青年大学习学习链接：" + url)
+    return id, t, url
 
 def sav_image(url,tittle):
     s = s = url.split('/')[-2]
