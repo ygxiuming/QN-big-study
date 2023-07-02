@@ -73,16 +73,20 @@ def get_person_info(token):
     response = requests.request("GET", url, headers=config.headers)
     res = json.loads(response.text)
     # print(res)
-    info['user_id'] = res['vo']['id']
-    info['name'] = res['vo']['username']
-    # address = res['vo']['address']
-    info['zhibu'] = res['vo']['danwei'] + res['vo']['zhibu']
-    info['openid'] = res['vo']['openid']
-    info['score'] = res['vo']['score']
-    info['wxname'] = res['vo']['wxname']
-    info['sex'] = res['vo']['sex']
-    info['brithday'] = res['vo']['brithday']
-    # print(res)
+
+    for key, value in res["vo"].items():
+
+        info[key] = value
+    # info['user_id'] = res['vo']['id']
+    # info['name'] = res['vo']['username']
+    # # address = res['vo']['address']
+    # info['zhibu'] = res['vo']['danwei'] + res['vo']['zhibu']
+    # info['openid'] = res['vo']['openid']
+    # info['score'] = res['vo']['score']
+    # info['wxname'] = res['vo']['wxname']
+    # info['sex'] = res['vo']['sex']
+    # info['brithday'] = res['vo']['brithday']
+    # # print(res)
     user_id = res['vo']['id']
     name = res['vo']['username']
 
@@ -114,15 +118,9 @@ def get_score_viery(token,userid,title,info):
     table.add_column("内容", style="dim")
 
     # 添加数据行
-    table.add_row("姓名", info['name'])
-    table.add_row("微信名", info['wxname'])
-    table.add_row("user_id", str(info['user_id']))
-    table.add_row("性别", info['sex'])
-    table.add_row("生日", info['brithday'])
-    table.add_row("openid", info['openid'])
-    # table.add_row("学校", address)
-    table.add_row("支部", info['zhibu'])
-    table.add_row("分数", str(info['score']))
+    for key,value in info.items():
+        table.add_row(str(key),str(value))
+
     table.add_row("学习标题", str(study_tittle))
     table.add_row("学习时间", str(res['addtime']))
     table.add_row("学习状态", str(state))
@@ -207,7 +205,7 @@ def get_excel_info():
     return data
 
 
-async def main(token,nid,name,id,tittle,subOrg):
+def main(token,nid,name,id,tittle,subOrg):
     QN_study(token, token,id,nid,name,subOrg)
     userid, name,info = get_person_info(token)
     addScoreInfo(token, userid)
@@ -225,36 +223,35 @@ if __name__ == '__main__':
 
     else:
         data = get_excel_info()
-        # for i in tqdm(data):
-        #     token = i['token']
-        #     nid = i['nid']
-        #     name = i['name']
-        #     subOrg = i['subOrg']
+        for i in tqdm(data):
+            token = i['token']
+            nid = i['nid']
+            name = i['name']
+            subOrg = i['subOrg']
+            id, tittle, url = gettittle()
+            console.rule()
+            main(token,nid,name,id,tittle,subOrg)
+
+        # async def process_list(data):
+        #     progress = Progress()
+        #     task_list = []
         #     id, tittle, url = gettittle()
-        #     console.rule()
-        #     main(token,nid,name,id,tittle,subOrg)
+        #     with progress:
+        #         task_id = progress.add_task("[cyan]Processing...", total=len(data))
+        #         for i in data:
+        #             token = i['token']
+        #             nid = i['nid']
+        #             name = i['name']
+        #             subOrg = i['subOrg']
+        #
+        #             console.rule()
+        #             task_list.append(asyncio.create_task(main(token,nid,name,id,tittle,subOrg)))
+        #
+        #         for task in asyncio.as_completed(task_list):
+        #             await task
+        #             progress.advance(task_id)
+        #
+        #
+        # asyncio.run(process_list(data))
 
-        async def process_list(data):
-            progress = Progress()
-            task_list = []
-
-            with progress:
-                task_id = progress.add_task("[cyan]Processing...", total=len(data))
-
-                for i in data:
-                    token = i['token']
-                    nid = i['nid']
-                    name = i['name']
-                    subOrg = i['subOrg']
-                    id, tittle, url = gettittle()
-                    console.rule()
-                    task_list.append(asyncio.create_task(main(token,nid,name,id,tittle,subOrg)))
-
-                for task in asyncio.as_completed(task_list):
-                    await task
-                    progress.advance(task_id)
-
-
-        asyncio.run(process_list(data))
-
-    # time.sleep(1000)
+    time.sleep(1000)
