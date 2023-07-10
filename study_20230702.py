@@ -53,11 +53,21 @@ github:https://github.com/ygxiuming/QN-big-study
                                                 ——————修明
 ####################################################################
 '''
+import threading
 
+# 定义一个线程类
+class MyThread(threading.Thread):
+    def __init__(self, func, args):
+        threading.Thread.__init__(self)
+        self.func = func
+        self.args = args
+
+    def run(self):
+        self.func(*self.args)
 def gettittle():
     global datas
     url = config.url['get_title']
-    res = requests.get(url).text
+    res = requests.get(url,timeout=5).text
     res = json.loads(res)["list"][0]
     # print(res)
     id = res["id"]
@@ -70,7 +80,7 @@ def gettittle():
 def get_person_info(token):
     info = {}
     url = config.url['get_person_info'] + token
-    response = requests.request("GET", url, headers=config.headers)
+    response = requests.request("GET", url, headers=config.headers,timeout=5)
     res = json.loads(response.text)
     # print(res)
 
@@ -87,15 +97,19 @@ def get_person_info(token):
     # info['sex'] = res['vo']['sex']
     # info['brithday'] = res['vo']['brithday']
     # # print(res)
-    user_id = res['vo']['id']
-    name = res['vo']['username']
 
 
-    return user_id,name,info
+    try:
+        user_id = res['vo']['id']
+        name = res['vo']['username']
+        return user_id, name, info
+    except : print("错误！！！")
+
+
 
 def get_score_viery(token,userid,title,info):
     url = f"http://www.jxqingtuan.cn/pub/pub/vol/classrecord/index?openid={token}&userId={userid}&page=1&pageSize=10"
-    response = requests.request("GET", url, headers=config.headers)
+    response = requests.request("GET", url, headers=config.headers,timeout=5)
     if len(json.loads(response.text)['vo']) > 0:
         res = json.loads(response.text)['vo'][0]
         # console.print_json(data = res)
@@ -163,7 +177,7 @@ def addScoreInfo(token, userid):
     }
 
     encoded_payload = urllib.parse.urlencode(payload)
-    response = requests.request("POST", url, headers=headers, data=encoded_payload)
+    response = requests.request("POST", url, headers=headers, data=encoded_payload,timeout=5)
 
     # print(response.text)
 
@@ -175,7 +189,7 @@ def QN_study(accessToken,token,id,nid,name,subOrg):
     url = f"http://www.jxqingtuan.cn/pub/pub/vol/volClass/join?accessToken={accessToken}"
     headers = config.headers
     headers['openid'] = accessToken
-    response = requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload,timeout=5)
     # print(response.text)
     # res = json.loads(response.text)
     if response.status_code == 200:
@@ -206,10 +220,14 @@ def get_excel_info():
 
 
 def main(token,nid,name,id,tittle,subOrg):
-    QN_study(token, token,id,nid,name,subOrg)
-    userid, name,info = get_person_info(token)
-    addScoreInfo(token, userid)
-    get_score_viery(token, userid,tittle,info)
+    print(f'{tittle}\nNID: {nid}\nName: {name}\n{subOrg}\n')
+    try:
+        QN_study(token, token,id,nid,name,subOrg)
+        userid, name,info = get_person_info(token)
+        addScoreInfo(token, userid)
+        get_score_viery(token, userid,tittle,info)
+    except Exception as e:
+        print("main 函数出现错误，错误为：",e)
 
 
 if __name__ == '__main__':
@@ -222,36 +240,32 @@ if __name__ == '__main__':
         print("请关闭软件，出门右走谢谢！")
 
     else:
+        # data = get_excel_info()
+        # id, tittle, url = gettittle()
+        # for i in tqdm(data):
+        #     token = i['token']
+        #     nid = i['nid']
+        #     name = i['name']
+        #     subOrg = i['subOrg']
+        #     console.rule()
+        #     main(token,nid,name,id,tittle,subOrg)
+        #     console.rule()
+
         data = get_excel_info()
+        id, tittle, url = gettittle()
+
+        processes = []
         for i in tqdm(data):
             token = i['token']
             nid = i['nid']
             name = i['name']
             subOrg = i['subOrg']
-            id, tittle, url = gettittle()
-            console.rule()
-            main(token,nid,name,id,tittle,subOrg)
+            thread = threading.Thread(target=main, args=(token, nid, name, id, tittle, subOrg))
+            processes.append(thread)
+            thread.start()
+            # 等待线程完成
+            processes[-1].join()
 
-        # async def process_list(data):
-        #     progress = Progress()
-        #     task_list = []
-        #     id, tittle, url = gettittle()
-        #     with progress:
-        #         task_id = progress.add_task("[cyan]Processing...", total=len(data))
-        #         for i in data:
-        #             token = i['token']
-        #             nid = i['nid']
-        #             name = i['name']
-        #             subOrg = i['subOrg']
-        #
-        #             console.rule()
-        #             task_list.append(asyncio.create_task(main(token,nid,name,id,tittle,subOrg)))
-        #
-        #         for task in asyncio.as_completed(task_list):
-        #             await task
-        #             progress.advance(task_id)
-        #
-        #
-        # asyncio.run(process_list(data))
+
 
     time.sleep(1000)
