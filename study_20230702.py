@@ -5,6 +5,7 @@ import urllib.parse
 from datetime import datetime
 
 import xlrd
+from numpy.core.defchararray import isdigit
 from rich.progress import Progress
 from tqdm import tqdm
 
@@ -64,6 +65,97 @@ class MyThread(threading.Thread):
 
     def run(self):
         self.func(*self.args)
+
+
+def get_mes(pid):
+    url = f"http://www.jxqingtuan.cn/pub/pub/vol/config/organization?pid={pid}"
+
+    payload = {}
+    headers = {
+        'Host': 'www.jxqingtuan.cn',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'Accept-Encoding': 'gzip, deflate',
+        'Connection': 'keep-alive',
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 16_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.27(0x18001b21) NetType/WIFI Language/zh_CN',
+        'Referer': 'http://www.jxqingtuan.cn/html/h5_index.html',
+        'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+        'X-Requested-With': 'XMLHttpRequest',
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    # print(response.text)
+    print("")
+    response = json.loads(response.text)
+    response = response["result"]
+    if len(response) == 0 :
+        print(f"当前选择选项PID为        {pid}")
+        return {},0
+    else:
+        # print = response
+        response_len = len(response)
+        k = {}
+        num = []
+        for i in response:
+            tittle = i['title']
+            id = i['id']
+            k["{}".format(tittle)] = id
+        num = list(k.values())
+        return k,num
+
+def id_getinfo():
+    list_tittle = {"团省委机关": "N0017",
+                   "省直属单位团委": "N0016",
+                   "省属本科院校团委": "N0013",
+                   "非省属本科院校团委": "N0014",
+                   "高职专科院校团委": "N0015",
+                   "南昌市": "N0002",
+                   "九江市": "N0003",
+                   "景德镇市": "N0004",
+                   "萍乡市": "N0005",
+                   "新余市": "N0006",
+                   "鹰潭市": "N0007",
+                   "赣州市": "N0008",
+                   "宜春市": "N0009",
+                   "上饶市": "N0010",
+                   "吉安市": "N0011",
+                   "抚州市": "N0012"
+                   }
+   #第一级
+    t=0
+    while(1):
+        if t == 0:
+            i = 0
+            samp = list(list_tittle.values())
+            print("请输入相应序号！")
+            for k in list_tittle:
+                print(str(i + 1) + "." + str(k) + ":" + str(list_tittle[k]))
+                i = i + 1
+            t = input("请输入对应序号:")
+            if isdigit(t):
+                t = int(t)
+            else:
+                break
+
+            pid = samp[t - 1]
+        elif t == 'q':
+            break
+        else:
+            list1,num = get_mes(pid)
+            i = 0
+            for k in list1:
+                print(str(i+1) + "." + str(k) + ":" + str(list1[k]))
+                i = i + 1
+            t = input("请输入对应序号(输入0重新查询,输入q退出查询！):")
+            if isdigit(t):
+                t = int(t)
+            else:
+                break
+            if t !=0 :
+                pid = num[t - 1]
+            else:
+                pass
+
 def gettittle():
     global datas
     url = config.url['get_title']
@@ -149,14 +241,14 @@ def get_score_viery(token,userid,title,info):
 
 
 
-def addScoreInfo(token, userid):
+def addScoreInfo(token, userid,url):
     url = config.url['addscore']
 
     payload = {
         "check":1,
         "type": 3,
         'title':"青年大学习",
-        "url": "https://h5.cyol.com/special/daxuexi/daxuexiall17/index.html",
+        "url": url,
         "openid":token,
         "userId":userid
     }
@@ -179,8 +271,7 @@ def addScoreInfo(token, userid):
     encoded_payload = urllib.parse.urlencode(payload)
     response = requests.request("POST", url, headers=headers, data=encoded_payload,timeout=5)
 
-    # print(response.text)
-
+    print(response.text)
 
 def QN_study(accessToken,token,id,nid,name,subOrg):
     if len(subOrg) > 0:payload = {"accessToken": token,"course": id, "nid": nid, "cardNo": name, "subOrg": subOrg}
@@ -219,15 +310,22 @@ def get_excel_info():
     return data
 
 
-def main(token,nid,name,id,tittle,subOrg):
+def main(token,nid,name,id,tittle,subOrg,url):
+    global error
     print(f'{tittle}\nNID: {nid}\nName: {name}\n{subOrg}\n')
     try:
         QN_study(token, token,id,nid,name,subOrg)
         userid, name,info = get_person_info(token)
-        addScoreInfo(token, userid)
+        addScoreInfo(token, userid,url)
         get_score_viery(token, userid,tittle,info)
     except Exception as e:
         print("main 函数出现错误，错误为：",e)
+        info_list = {}
+        info_list['nid'] = nid
+        info_list['name'] = name
+        info_list['error'] = e
+        error.append(info_list)
+
 
 
 if __name__ == '__main__':
@@ -235,36 +333,64 @@ if __name__ == '__main__':
     console.rule("江西青年大学习学习交流脚本")
     print(tittle)
     agree = int(input("是否同意以上声明，同意（请输入1），不同意（请输入0） ："))
+    error = []
+    model = '''
+####################################################################
+         使用说明：
+             将名单.xlsx表格与该程序放置同一目录下，填写相关学习名单信息，
+         其中组织代码pid可通过该程序的模块1可查询，如果是三级组织需填写班级
+         信息，若是四级组织不要填写班级信息空着即可。
+            填写完成之后运行该程序的模块2即可批量学习！
+            若出现问题可前往以下网址提交issu
+        
+         https://github.com/ygxiuming/QN-big-study
 
+####################################################################
+
+                            1.青年大学习组织id查询
+
+                            2.青年大学习开始批量学习   
+
+####################################################################
+    '''
     if agree == 0:
         print("请关闭软件，出门右走谢谢！")
 
     else:
-        # data = get_excel_info()
-        # id, tittle, url = gettittle()
-        # for i in tqdm(data):
-        #     token = i['token']
-        #     nid = i['nid']
-        #     name = i['name']
-        #     subOrg = i['subOrg']
-        #     console.rule()
-        #     main(token,nid,name,id,tittle,subOrg)
-        #     console.rule()
+        while 1:
+            print(model)
+            mod = int(input("请输入选择模式序号："))
+            if mod == 1 :
+                id_getinfo()
+                print("已返回模块选择界面！！！")
+            else:
+                # data = get_excel_info()
+                # id, tittle, url = gettittle()
+                # for i in tqdm(data):
+                #     token = i['token']
+                #     nid = i['nid']
+                #     name = i['name']
+                #     subOrg = i['subOrg']
+                #     console.rule()
+                #     main(token,nid,name,id,tittle,subOrg)
+                #     console.rule()
 
-        data = get_excel_info()
-        id, tittle, url = gettittle()
+                data = get_excel_info()
+                id, tittle, url = gettittle()
 
-        processes = []
-        for i in tqdm(data):
-            token = i['token']
-            nid = i['nid']
-            name = i['name']
-            subOrg = i['subOrg']
-            thread = threading.Thread(target=main, args=(token, nid, name, id, tittle, subOrg))
-            processes.append(thread)
-            thread.start()
-            # 等待线程完成
-            processes[-1].join()
+                processes = []
+                for i in tqdm(data):
+                    token = i['token']
+                    nid = i['nid']
+                    name = i['name']
+                    subOrg = i['subOrg']
+                    thread = threading.Thread(target=main, args=(token, nid, name, id, tittle, subOrg,url))
+                    processes.append(thread)
+                    thread.start()
+                    # 等待线程完成
+                    processes[-1].join()
+
+                print(error)
 
 
 
