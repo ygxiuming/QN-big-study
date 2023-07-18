@@ -242,7 +242,8 @@ def get_score_viery(token,userid,title,info):
 
 
 def addScoreInfo(token, userid,url):
-    url = config.url['addscore']
+    session = requests.session()
+    session.headers.update(config.headers)
 
     payload = {
         "check":1,
@@ -253,7 +254,9 @@ def addScoreInfo(token, userid,url):
         "userId":userid
     }
 
-    headers = {
+    url = config.url['addscore']
+
+    session.headers = {
         'Host': 'www.jxqingtuan.cn',
         'Connection': 'keep-alive',
         'Content-Length': '195',
@@ -269,7 +272,7 @@ def addScoreInfo(token, userid,url):
     }
 
     encoded_payload = urllib.parse.urlencode(payload)
-    response = requests.request("POST", url, headers=headers, data=encoded_payload,timeout=5)
+    response = session.post(url, data=encoded_payload)
 
     print(response.text)
 
@@ -277,11 +280,12 @@ def QN_study(accessToken,token,id,nid,name,subOrg):
     if len(subOrg) > 0:payload = {"accessToken": token,"course": id, "nid": nid, "cardNo": name, "subOrg": subOrg}
     else:payload = {"accessToken": token,"course": id,"subOrg": "0","nid": nid,"cardNo": name}
     payload = json.dumps(payload)
+    print(payload)
     url = f"http://www.jxqingtuan.cn/pub/pub/vol/volClass/join?accessToken={accessToken}"
     headers = config.headers
     headers['openid'] = accessToken
     response = requests.request("POST", url, headers=headers, data=payload,timeout=5)
-    # print(response.text)
+    print(response.text)
     # res = json.loads(response.text)
     if response.status_code == 200:
         return '青年大学习学习成功！！！'
@@ -314,9 +318,9 @@ def main(token,nid,name,id,tittle,subOrg,url):
     global error
     print(f'{tittle}\nNID: {nid}\nName: {name}\n{subOrg}\n')
     try:
-        QN_study(token, token,id,nid,name,subOrg)
         userid, name,info = get_person_info(token)
         addScoreInfo(token, userid,url)
+        QN_study(token, token, id, nid, name, subOrg)
         get_score_viery(token, userid,tittle,info)
     except Exception as e:
         print("main 函数出现错误，错误为：",e)
@@ -372,7 +376,7 @@ if __name__ == '__main__':
                 #     name = i['name']
                 #     subOrg = i['subOrg']
                 #     console.rule()
-                #     main(token,nid,name,id,tittle,subOrg)
+                #     main(token,nid,name,id,tittle,subOrg,url)
                 #     console.rule()
 
                 data = get_excel_info()
