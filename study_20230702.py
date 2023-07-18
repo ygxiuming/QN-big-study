@@ -242,8 +242,7 @@ def get_score_viery(token,userid,title,info):
 
 
 def addScoreInfo(token, userid,url):
-    session = requests.session()
-    session.headers.update(config.headers)
+
 
     payload = {
         "check":1,
@@ -254,9 +253,7 @@ def addScoreInfo(token, userid,url):
         "userId":userid
     }
 
-    url = config.url['addscore']
-
-    session.headers = {
+    headers = {
         'Host': 'www.jxqingtuan.cn',
         'Connection': 'keep-alive',
         'Content-Length': '195',
@@ -272,7 +269,7 @@ def addScoreInfo(token, userid,url):
     }
 
     encoded_payload = urllib.parse.urlencode(payload)
-    response = session.post(url, data=encoded_payload)
+    response = requests.request("POST", url = config.url['addscore'], headers=headers, data=encoded_payload,timeout=5)
 
     print(response.text)
 
@@ -318,9 +315,9 @@ def main(token,nid,name,id,tittle,subOrg,url):
     global error
     print(f'{tittle}\nNID: {nid}\nName: {name}\n{subOrg}\n')
     try:
+        QN_study(token, token,id,nid,name,subOrg)
         userid, name,info = get_person_info(token)
         addScoreInfo(token, userid,url)
-        QN_study(token, token, id, nid, name, subOrg)
         get_score_viery(token, userid,tittle,info)
     except Exception as e:
         print("main 函数出现错误，错误为：",e)
